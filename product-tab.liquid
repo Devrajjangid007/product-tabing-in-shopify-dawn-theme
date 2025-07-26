@@ -1,0 +1,187 @@
+{%- unless section.settings.quick_add == 'none' -%}
+  {{ 'quick-add.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+{%- endunless -%}
+
+{%- if section.settings.quick_add == 'standard' -%}
+  <script src="{{ 'quick-add.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}
+
+
+
+
+
+
+
+
+<div class="product-tabing-main">
+<div class="product-tabing-inner-main">
+
+<div class="product-header-main">
+<div class="product-header">
+  <h3 class="relative">{{ section.settings.heading }}<img src="https://cdn.shopify.com/s/files/1/0867/7382/5841/files/Group_1400007489.png?v=1753275973" class="head-line" style="width: 0%;" ></h3>
+  <p class="relative">{{ section.settings.text }}
+    <img src="https://cdn.shopify.com/s/files/1/0867/7382/5841/files/sdfdfs.png?v=1753276117" class="text-line">
+  </p>
+</div>
+</div>
+
+
+  <div class="product-tabing-inner">
+    
+    <div class="tabs_main">
+      <div class="tabs">
+        {% for block in section.blocks %}
+          <div class="tab-link" data-tab="#tab-{{ forloop.index }}_{{ section.id }}">
+            <span>{{block.settings.heading}}</span>
+        <div class="active_bg"></div>
+          <img src="https://cdn.shopify.com/s/files/1/0867/7382/5841/files/sdfdfs.png?v=1753276117" class="text-line">
+        </div>
+
+        {% endfor %}
+      </div>
+
+      {% comment %} <div class="tab_link">
+        {% for block in section.blocks %}
+          <div class="tab_link_btn" id="tab_link-{{ forloop.index }}_{{ section.id }}">
+            <a href="{{ block.settings.link }}">VIEW ALL
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1.12644 14L0 12.8757L11.3716 1.52581H1.4751L2.95019 5.23336e-05L14 0V11.0287L12.4981 12.501V2.6501L1.12644 14Z" fill="#0066CC"></path>
+              </svg>
+            </a>
+          </div>
+        {% endfor %}
+      </div> {% endcomment %}
+    </div>
+
+        {% assign skip_card_product_styles = false %}
+    
+    {% for block in section.blocks %}
+      <div class="product_slider" id="tab-{{ forloop.index }}_{{ section.id }}">
+       {% assign collection = block.settings.collection %}
+  
+    {% for product in collection %}
+    
+
+
+    
+           {% render 'ct-product-card',
+                  card_product: product,
+                 
+                  skip_styles: skip_card_product_styles,
+                  section_id: section.id,
+                  quick_add: section.settings.quick_add
+                %}
+        
+         
+        
+
+        
+        {% endfor %}
+      </div>
+    {% endfor %}
+  </div>
+</div>
+</div>
+
+<script>
+    $(document).ready(function () {
+    $('.tabs').each(function () {
+      var active, content1, content2;
+      var links = $(this).find('.tab-link');
+
+      active = links.first().addClass('active');
+      var tabId = active.data('tab');
+      content1 = $(tabId);
+      content2 = $('#tab_link' + tabId.replace('#tab', ''));
+
+      // Hide all except the first
+      links.not(':first').each(function () {
+        var id = $(this).data('tab');
+        $(id).hide();
+        $('#tab_link' + id.replace('#tab', '')).hide();
+      });
+
+      // Handle click
+      links.click(function (e) {
+        e.preventDefault();
+
+        active.removeClass('active');
+        content1.hide();
+        content2.hide();
+
+        active = $(this);
+        var tabId = active.data('tab');
+        content1 = $(tabId);
+        content2 = $('#tab_link' + tabId.replace('#tab', ''));
+
+        active.addClass('active');
+        content1.show();
+        content2.show();
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Product-tab",
+  "class": "Product-tab",
+  "settings": [
+    {
+        "type": "text",
+        "id": "heading",
+        "label": "Heading",
+        "default":"Daily Drops"
+    },
+    {
+        "type": "html",
+        "id": "text",
+        "label": "text"
+    },
+    {
+      "type": "select",
+      "id": "quick_add",
+      "default": "standard",
+      "label": "t:sections.main-collection-product-grid.settings.quick_add.label",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:sections.main-collection-product-grid.settings.quick_add.options.option_1"
+        },
+        {
+          "value": "standard",
+          "label": "t:sections.main-collection-product-grid.settings.quick_add.options.option_2"
+        },
+        {
+          "value": "bulk",
+          "label": "t:sections.main-collection-product-grid.settings.quick_add.options.option_3"
+        }
+      ]
+    },
+  ],
+  "blocks": [
+  {
+    "type": "Text",
+    "name":"Text Box",
+    "settings": [
+      {
+        "type": "text",
+        "id": "heading",
+        "label": "text"
+      },
+      {
+        "type": "product_list",
+        "id": "collection",
+        "label": "products"
+      }
+    ]
+  }
+],
+  "presets": [
+    {
+  "name": "Product-tab",
+    }
+  ]
+}
+{% endschema %}
